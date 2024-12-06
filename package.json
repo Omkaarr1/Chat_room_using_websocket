@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "start": "node epsile-server.js"
+  },
+  "dependencies": {
+    "compression": "^1.7.5",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
