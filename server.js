@@ -1,58 +1,96 @@
-#!/usr/bin/env node
-// epsile server
-// created by djazz
-'use strict';
+const path = require('path');
+const fs = require('fs');
+const express = require('express');
+const compression = require('compression');  // Import compression
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server); // Correct initialization
+const less = require('less');
 
 // config
 var port = 8000;
-
-// load and initialize modules
-var express = require('express');
-var compression = require('compression');  // Import compression
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io')(server); // Correct initialization
 
 server.listen(port, function () {
     console.log('epsile server listening at port %d', port);
 });
 
 app.use(compression()); // Use the compression middleware
-app.use(express.static(__dirname + '/'));
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// API to return .js files
+app.get('/js/lib/:file', (req, res) => {
+    const filePath = path.join(__dirname, 'public', 'js', 'lib', req.params.file);
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send('JavaScript file not found');
+    }
+});
+
+// API to return .js files in the general js folder
+app.get('/js/:file', (req, res) => {
+    const filePath = path.join(__dirname, 'public', 'js', req.params.file);
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send('JavaScript file not found');
+    }
+});
+
+// API to return images
+app.get('/img/:file', (req, res) => {
+    const filePath = path.join(__dirname, 'public', 'img', req.params.file);
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send('Image file not found');
+    }
+});
+
+// API to return media files (audio)
+app.get('/media/:file', (req, res) => {
+    const filePath = path.join(__dirname, 'public', 'media', req.params.file);
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send('Media file not found');
+    }
+});
 
 // Serve .less files as compiled CSS
 app.get("/style/:file", (req, res) => {
-    const filePath = path.join(__dirname, "style", req.params.file + ".less");
-  
+    const filePath = path.join(__dirname, "style", "epsile" + ".less");
+
     // Check if the .less file exists
     if (fs.existsSync(filePath)) {
-      // Read the .less file
-      fs.readFile(filePath, "utf8", (err, data) => {
-        if (err) {
-          return res.status(500).send("Error reading .less file");
-        }
-  
-        // Compile the .less content to CSS
-        less.render(data, (err, output) => {
-          if (err) {
-            return res.status(500).send("Error compiling LESS to CSS");
-          }
-  
-          // Return the compiled CSS to the client
-          res.header("Content-Type", "text/css");
-          res.send(output.css);
+        // Read the .less file
+        fs.readFile(filePath, "utf8", (err, data) => {
+            if (err) {
+                return res.status(500).send("Error reading .less file");
+            }
+
+            // Compile the .less content to CSS
+            less.render(data, (err, output) => {
+                if (err) {
+                    return res.status(500).send("Error compiling LESS to CSS");
+                }
+
+                // Return the compiled CSS to the client
+                res.header("Content-Type", "text/css");
+                res.send(output.css);
+            });
         });
-      });
     } else {
-      res.status(404).send("LESS file not found");
+        res.status(404).send("LESS file not found");
     }
-  });
-  
-  // Fallback for other routes (e.g., serving index.html)
-  app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"));
-  });
-  
+});
+
+// Fallback for other routes (e.g., serving index.html)
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "/index.html"));
+});
 
 // global variables, keeps the state of the app
 var sockets = {},
@@ -74,7 +112,6 @@ function timestamp() {
 
 // listen for connections
 io.on('connection', function (socket) {
-
     // store the socket and info about the user
     sockets[socket.id] = socket;
     users[socket.id] = {
@@ -91,18 +128,15 @@ io.on('connection', function (socket) {
         socket.emit('conn');
         sockets[strangerQueue].emit('conn');
         strangerQueue = false;
-
     } else {
         strangerQueue = socket.id;
     }
 
     peopleActive++;
     peopleTotal++;
-    // console.log(timestamp(), peopleTotal, "connect");
     io.emit('stats', { people: peopleActive });
 
     socket.on("new", function () {
-
         // Got data from someone
         if (strangerQueue !== false) {
             users[socket.id].connectedTo = strangerQueue;
@@ -151,8 +185,6 @@ io.on('connection', function (socket) {
     });
 
     socket.on("disconnect", function (err) {
-
-        // Someone disconnected, ctoed or was kicked
         var connTo = (users[socket.id] && users[socket.id].connectedTo);
         if (connTo === undefined) {
             connTo = -1;
@@ -172,7 +204,6 @@ io.on('connection', function (socket) {
             peopleActive--;
         }
         peopleTotal--;
-        // console.log(timestamp(), peopleTotal, "disconnect");
         io.emit('stats', { people: peopleActive });
     });
 });
