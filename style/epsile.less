@@ -12,6 +12,123 @@ html, body {
 	overflow: hidden;
 }
 
+/* Existing styles remain unchanged */
+
+/* Mobile Optimizations */
+@media screen and (max-width: 768px) {
+	header {
+		height: 50px;
+		#logo {
+			width: 120px;
+			height: 50px;
+			top: 0;
+		}
+	}
+
+	footer {
+		font-size: 12px;
+		padding: 5px;
+	}
+
+	#chatMain {
+		font-size: 12px;
+
+		#chatMainDiv {
+			padding: 2px;
+		}
+	}
+
+	#panelRow {
+		height: auto;
+		padding: 5px;
+		flex-direction: column;
+
+		#disconnectButton {
+			width: 100%;
+			margin-bottom: 5px;
+		}
+	}
+
+	#chatAreaWrap {
+		padding: 2px;
+
+		#chatArea {
+			font-size: 12px;
+			padding: 2px;
+		}
+	}
+
+	#startButton {
+		font-size: 16px;
+		padding: 10px;
+	}
+
+	#isTypingDiv {
+		font-size: 12px;
+		padding: 2px;
+		height: auto;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	body {
+		font-size: 12px;
+	}
+
+	header {
+		height: 40px;
+
+		#logo {
+			width: 100px;
+			height: 40px;
+			top: 0;
+		}
+	}
+
+	footer {
+		font-size: 10px;
+		padding: 3px;
+	}
+
+	#chatMain {
+		font-size: 10px;
+
+		#chatMainDiv {
+			padding: 1px;
+		}
+	}
+
+	#panelRow {
+		padding: 3px;
+		#disconnectButton {
+			font-size: 12px;
+			width: 100%;
+			padding: 8px;
+		}
+	}
+
+	#chatAreaWrap {
+		padding: 1px;
+
+		#chatArea {
+			font-size: 10px;
+			padding: 2px;
+		}
+	}
+
+	#startButton {
+		font-size: 14px;
+		padding: 8px;
+	}
+
+	#isTypingDiv {
+		font-size: 10px;
+		padding: 2px;
+		height: auto;
+	}
+}
+
+
 a {
 	color: #0AF;
 	&:hover {
