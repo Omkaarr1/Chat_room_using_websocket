@@ -1,0 +1,19 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "epsile-server.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "epsile-server.js"
+      }
+    ],
+    "env": {
+      "PORT": "8000"
+    }
+  }
+  
