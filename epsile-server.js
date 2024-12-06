@@ -20,6 +20,39 @@ server.listen(port, function () {
 app.use(compression()); // Use the compression middleware
 app.use(express.static(__dirname + '/'));
 
+// Serve .less files as compiled CSS
+app.get("/style/:file", (req, res) => {
+    const filePath = path.join(__dirname, "style", req.params.file + ".less");
+  
+    // Check if the .less file exists
+    if (fs.existsSync(filePath)) {
+      // Read the .less file
+      fs.readFile(filePath, "utf8", (err, data) => {
+        if (err) {
+          return res.status(500).send("Error reading .less file");
+        }
+  
+        // Compile the .less content to CSS
+        less.render(data, (err, output) => {
+          if (err) {
+            return res.status(500).send("Error compiling LESS to CSS");
+          }
+  
+          // Return the compiled CSS to the client
+          res.header("Content-Type", "text/css");
+          res.send(output.css);
+        });
+      });
+    } else {
+      res.status(404).send("LESS file not found");
+    }
+  });
+  
+  // Fallback for other routes (e.g., serving index.html)
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+  });
+  
 
 // global variables, keeps the state of the app
 var sockets = {},
