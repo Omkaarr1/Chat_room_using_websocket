@@ -1,0 +1,44 @@
+{
+    "version": 2,
+    "name": "epsile-server",
+    "builds": [
+      {
+        "src": "server.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/js/lib/(.*)",
+        "dest": "/server.js"
+      },
+      {
+        "src": "/js/(.*)",
+        "dest": "/server.js"
+      },
+      {
+        "src": "/img/(.*)",
+        "dest": "/server.js"
+      },
+      {
+        "src": "/media/(.*)",
+        "dest": "/server.js"
+      },
+      {
+        "src": "/style/(.*)",
+        "dest": "/server.js"
+      },
+      {
+        "src": "/socket.io/(.*)",
+        "dest": "/server.js"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "/server.js"
+      }
+    ],
+    "env": {
+      "NODE_ENV": "production"
+    }
+  }
+  
