@@ -5,7 +5,7 @@ epsile got it name from epsilon, and it's an open-source clone of Omegle. It's u
 
 Demo
 ---
-(stshub.fun)[stshub.fun]
+https://www.stshub.fun/
 
 Installation
 ---
