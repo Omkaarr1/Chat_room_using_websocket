@@ -32,11 +32,11 @@ var Epsile = new function () {
 	alertSound.volume = 0.0;
 
 	function setTyping(state) {
-		if(state) {
-			isTypingDiv.style.bottom = "80px";
-		}
-		else {
-			isTypingDiv.style.bottom = (80 - isTypingDiv.offsetHeight) + "px";
+		// Show or hide the typing indicator based on state
+		if (state) {
+			isTypingDiv.style.display = 'block';
+		} else {
+			isTypingDiv.style.display = 'none';
 		}
 		strangerTyping = state;
 	}
@@ -281,12 +281,13 @@ var Epsile = new function () {
 			}
 		}
 	}, false);
+
 	chatArea.addEventListener("keyup", function (e) {
 		if (socket) {
 			if (typingtimer!==null) {
 				clearTimeout(typingtimer);
 			}
-			
+
 			if (chatArea.value === "" && isTyping) {
 				socket.emit("typing", false); 
 				isTyping = false;

@@ -7,12 +7,12 @@
 	<link rel="icon" type="image/png" href="img/epsile_logo16.png">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
-	<style>
-		html, body {
+    <style>
+        html, body {
     height: 100%;
     margin: 0;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background: #f7f7f7; /* Soft light gray background */
+    background: #f7f7f7; /* Soft background */
     color: #333;
 }
 
@@ -76,7 +76,7 @@
 #chatWindow {
     display: flex;
     flex-direction: column;
-    padding: 1rem 2rem; /* Padding for some spacing on the left */
+    padding: 1rem 2rem; /* Some padding on the sides */
     box-sizing: border-box;
     position: relative;
 }
@@ -98,18 +98,17 @@
 #chatMain {
     flex: 1;
     overflow-y: auto;
-    padding: 2rem 0; /* Vertical padding for nicer spacing */
+    padding: 2rem 0; /* Vertical padding */
     margin-bottom: 70px; /* Space for bottom panel */
     box-sizing: border-box;
 }
 
 #chatMainDiv {
     max-width: 600px;
-    margin-left: 0; /* Aligned to the left */
     word-wrap: break-word;
 }
 
-/* Each message is one bubble per line */
+/* Each message bubble on its own line */
 #chatMainDiv div {
     display: block;
     margin: 0.5rem 0;
@@ -121,12 +120,12 @@
 
 /* You message bubble: soft pink */
 #chatMainDiv div:has(.youChat) {
-    background: #ffe6e6; /* Soft pastel pink */
+    background: #ffe6e6;
 }
 
 /* Stranger message bubble: soft blue */
 #chatMainDiv div:has(.strangerChat) {
-    background: #e6f0ff; /* Soft pastel blue */
+    background: #e6f0ff;
 }
 
 /* Console/chat info messages */
@@ -138,15 +137,19 @@
     border-radius: 0;
 }
 
-/* Typing indicator (if used) */
+/* Typing indicator styling */
 #isTypingDiv {
-    display: none;
+    position: fixed;
+    left: 20px;
+    bottom: 90px; /* Just above the panel row which is at bottom:20px */
+    background: #fff8c6;
+    color: #333;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
     font-style: italic;
-    color: #666;
-    background: #f0f0f0;
-    border-radius: 5px;
-    padding: 0.3rem 0.5rem;
-    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+    display: none; /* Will be toggled by JS to 'block' when stranger is typing */
 }
 
 /* Bottom panel fixed at bottom */
@@ -220,11 +223,13 @@
         left: 10px;
         right: 10px;
     }
+    #isTypingDiv {
+        left: 10px;
+        bottom: 90px;
+    }
 }
 
-
-	</style>
-
+    </style>
 	<script>
 		var less = {
 			env: "development"
@@ -256,7 +261,11 @@
 	</section>
 
 	<section id="welcomeScreen">
-	
+
+        <header>
+			<a href="./"><div id="logo"></div></a>
+		</header>
+        <br>
 		<section id="startButtonDiv"><div>
 			<div id="description">
 				Epsile is a simple open-source tool for our STS family, where people get connected to other people, in a one-to-one chat.<br>
@@ -270,10 +279,6 @@
 			<br>
 			<input type=button value="Start chatting!" onclick="Epsile.startChat();" class="button" id="startButton" disabled>
 		</div></section>
-		
-		<header>
-			<a href="./"><div id="logo"></div></a>
-		</header>
 	</section>
 </section>
 
