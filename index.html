@@ -5,7 +5,226 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Epsile: Talk to strangers!</title>
 	<link rel="icon" type="image/png" href="img/epsile_logo16.png">
-	<link rel="stylesheet/less" type="text/css" href="style/epsile.less">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+	<style>
+		html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: #f7f7f7; /* Soft light gray background */
+    color: #333;
+}
+
+#container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Show welcomeScreen at first, hide chatWindow */
+#chatWindow, #welcomeScreen {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Welcome Screen - center aligned */
+#welcomeScreen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+}
+
+#welcomeScreen #logo {
+    width: 100px;
+    height: 100px;
+    background: url('img/epsile_logo256.png') no-repeat center center / cover;
+    margin-bottom: 1.5rem;
+}
+
+#welcomeScreen #description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 2rem;
+}
+
+#welcomeScreen #startButton {
+    font-size: 1.2rem;
+    padding: 0.75rem 2rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background: #007bff;
+    color: #fff;
+    transition: background 0.3s ease;
+}
+#welcomeScreen #startButton:hover {
+    background: #0056b3;
+}
+
+/* Chat Window */
+#chatWindow {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 2rem; /* Padding for some spacing on the left */
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* People online at top-left */
+#peopleOnlineSection {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #0d6efd;
+    color: #fff;
+    padding: 0.4rem 0.75rem;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    z-index: 10;
+}
+
+/* Main chat area */
+#chatMain {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem 0; /* Vertical padding for nicer spacing */
+    margin-bottom: 70px; /* Space for bottom panel */
+    box-sizing: border-box;
+}
+
+#chatMainDiv {
+    max-width: 600px;
+    margin-left: 0; /* Aligned to the left */
+    word-wrap: break-word;
+}
+
+/* Each message is one bubble per line */
+#chatMainDiv div {
+    display: block;
+    margin: 0.5rem 0;
+    padding: 0.75rem 1rem;
+    border-radius: 15px;
+    color: #333;
+    line-height: 1.4;
+}
+
+/* You message bubble: soft pink */
+#chatMainDiv div:has(.youChat) {
+    background: #ffe6e6; /* Soft pastel pink */
+}
+
+/* Stranger message bubble: soft blue */
+#chatMainDiv div:has(.strangerChat) {
+    background: #e6f0ff; /* Soft pastel blue */
+}
+
+/* Console/chat info messages */
+.consoleChat {
+    font-style: italic;
+    color: #555;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* Typing indicator (if used) */
+#isTypingDiv {
+    display: none;
+    font-style: italic;
+    color: #666;
+    background: #f0f0f0;
+    border-radius: 5px;
+    padding: 0.3rem 0.5rem;
+    margin: 0.5rem 0;
+}
+
+/* Bottom panel fixed at bottom */
+#panelRow {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    box-sizing: border-box;
+    z-index: 999;
+}
+
+#disconnectButton {
+    margin-right: 1rem;
+    border: none;
+    background: #f94144;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 1rem;
+}
+#disconnectButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+#disconnectButton:hover:not(:disabled) {
+    background: #d72326;
+}
+
+#chatAreaWrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+#chatArea {
+    width: 100%;
+    height: 2rem;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+#chatArea:focus {
+    outline: none;
+    border-color: #3a8dae;
+}
+
+/* Utility class */
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    #chatMainDiv {
+        max-width: calc(100% - 2rem);
+    }
+    #panelRow {
+        left: 10px;
+        right: 10px;
+    }
+}
+
+
+	</style>
+
 	<script>
 		var less = {
 			env: "development"

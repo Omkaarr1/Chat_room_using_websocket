@@ -28,22 +28,20 @@ var Epsile = new function () {
 	var notifyTimer = null;
 	var url_pattern = /https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w/_\.]*(\?\S+)?)?)?/;
 
-	// mute the notification sound
+	// Mute the notification sound initially
 	alertSound.volume = 0.0;
-	
+
 	function setTyping(state) {
 		if(state) {
-			isTypingDiv.style.bottom = 80+"px";
+			isTypingDiv.style.bottom = "80px";
 		}
 		else {
-			isTypingDiv.style.bottom = (80-isTypingDiv.offsetHeight)+"px";
+			isTypingDiv.style.bottom = (80 - isTypingDiv.offsetHeight) + "px";
 		}
 		strangerTyping = state;
 	}
-	
-	function createConnection() {
 
-		// connect to the socket.io server running on same host/port
+	function createConnection() {
 		socket = io.connect(null, {
 			reconnect: false,
 			'force new connection': true
@@ -58,7 +56,7 @@ var Epsile = new function () {
 			setTyping(false);
 		});
 
-		socket.on('conn', function () { // Connected
+		socket.on('conn', function () { // Connected with a stranger
 			chatMainDiv.innerHTML = "";
 			logChat(0, "You are now chatting with a random stranger. Say hi!");
 			disconnectButton.disabled = false;
@@ -72,9 +70,7 @@ var Epsile = new function () {
 			var who = data.who;
 			var reason = data.reason;
 			chatArea.disabled = true;
-			
-			
-			
+
 			switch (who) {
 				case 1:
 					logChat(0, "You disconnected.");
@@ -82,7 +78,7 @@ var Epsile = new function () {
 				case 2:
 					logChat(0, "Stranger disconnected.");
 					if (reason) {
-						logChat(0, "Reason: "+reason);
+						logChat(0, "Reason: " + reason);
 					}
 					break;
 			}
@@ -91,7 +87,6 @@ var Epsile = new function () {
 			setTyping(false);
 			disconnectType = true;
 			disconnectButton.disabled = false;
-			//logChat(-1, "<input type=button value='Start a new chat' onclick='Epsile.newStranger();'>");
 			disconnectButton.value = "New";
 			chatArea.disabled = true;
 			chatArea.focus();
@@ -113,7 +108,6 @@ var Epsile = new function () {
 			if (stats.people !== undefined) {
 				peopleOnlineSpan.innerHTML = stats.people;
 			}
-			
 		});
 
 		socket.on('disconnect', function () {
@@ -135,7 +129,7 @@ var Epsile = new function () {
 			disconnectType = false;
 		});
 	}
-	
+
 	function logChat(type, message) {
 		var who = "";
 		var who2 = "";
@@ -143,20 +137,20 @@ var Epsile = new function () {
 		var node = document.createElement("div");
 		if(type > 0) {
 			if(type===2) {
-				who = "<span class='strangerChat'>Stranger: <\/span>";
+				who = "<span class='strangerChat'>Stranger: </span>";
 				who2 = "Stranger: ";
 			}
 			else {
-				who = "<span class='youChat'>You: <\/span>";
+				who = "<span class='youChat'>You: </span>";
 			}
 			if(message.substr(0, 4)==='/me ') {
 				message = message.substr(4);
 				if(type===2) {
-					who = "<span class='strangerChat'>*** Stranger <\/span>";
+					who = "<span class='strangerChat'>*** Stranger </span>";
 					who2 = "*** Stranger ";
 				}
 				else {
-					who = "<span class='youChat'>*** You <\/span>";
+					who = "<span class='youChat'>*** You </span>";
 				}
 			}
 			message = message.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
@@ -173,14 +167,14 @@ var Epsile = new function () {
 			node.innerHTML = who + message;
 		}
 		else {
-			node.innerHTML = "<span class='consoleChat'>"+message+"<\/span>";
+			node.innerHTML = "<span class='consoleChat'>"+message+"</span>";
 		}
 		chatMainDiv.appendChild(node);
 		chatMain.scrollTop = chatMain.scrollHeight;
 		chatMain.scrollLeft = 0;
 		if(isBlurred && (type === 0 || type === 2)) {
 			alertSound.play();
-			if(firstNotify && notify > 0 && window.webkitNotifications.checkPermission() === 0) {
+			if(firstNotify && notify > 0 && window.webkitNotifications && window.webkitNotifications.checkPermission() === 0) {
 				clearTimeout(notifyTimer);
 				if(lastNotify) lastNotify.cancel();
 				lastNotify = window.webkitNotifications.createNotification('img/epsile_logo32.png', 'Epsile'+(type===0?' Message':''), who2+message2);
@@ -188,7 +182,7 @@ var Epsile = new function () {
 				firstNotify = false;
 				notifyTimer = setTimeout(function () {
 					lastNotify.cancel();
-				}, 7*1000);
+				}, 7000);
 			}
 		}
 	}
@@ -203,8 +197,10 @@ var Epsile = new function () {
 				notify = 1;
 			}
 		}
+		// Hide welcome screen and show chat window
 		welcomeScreen.style.display = 'none';
-		chatWindow.style.display = 'block';
+		chatWindow.style.display = 'flex';
+
 		createConnection();
 	};
 
@@ -239,25 +235,16 @@ var Epsile = new function () {
 		}
 	};
 
-	/*function resizeWindow() {
-		//chatMain.style.height = (window.innerHeight-70-20)+"px";
-		chatArea.style.width = (window.innerWidth-94)+"px";
-	}*/
-
 	function onReady() {
-		/*if (window.opera) {
-			var operacss = document.createElement("link");
-			operacss.setAttribute("rel", "stylesheet");
-			operacss.setAttribute("href", "opera.css");
-			document.getElementsByTagName("head")[0].appendChild(operacss);
-		}*/
-		//resizeWindow();
+		// Initial state: show only welcomeScreen, hide chatWindow
+		welcomeScreen.style.display = 'flex';
+		chatWindow.style.display = 'none';
 		
 		startButton.disabled = false;
 		startButton.focus();
-		
 	}
 	setTimeout(onReady, 0);
+
 	function blurred() {
 		isBlurred = true;
 		firstNotify = true;
@@ -267,8 +254,7 @@ var Epsile = new function () {
 		if(lastNotify) lastNotify.cancel();
 		if(notifyTimer) clearTimeout(notifyTimer);
 	}
-	//window.addEventListener("resize", resizeWindow, false);
-	//window.addEventListener("load", onReady, false);
+
 	window.addEventListener("blur", blurred, false);
 	window.addEventListener("focus", focused, false);
 	disconnectButton.addEventListener('click', this.doDisconnect, false);
@@ -282,7 +268,7 @@ var Epsile = new function () {
 						clearTimeout(typingtimer);
 					}
 					if(isTyping) {
-						socket.emit("typing", false); // Not typing
+						socket.emit("typing", false);
 					}
 					isTyping = false;
 					socket.emit("chat", msg);
@@ -302,7 +288,7 @@ var Epsile = new function () {
 			}
 			
 			if (chatArea.value === "" && isTyping) {
-				socket.emit("typing", false); // Not typing
+				socket.emit("typing", false); 
 				isTyping = false;
 			}
 			else {
@@ -313,15 +299,11 @@ var Epsile = new function () {
 				
 				typingtimer = setTimeout(function () {
 					if(socket && isTyping) {
-						socket.emit("typing", false); // Not typing
+						socket.emit("typing", false);
 					}
 					isTyping = false;
-				}, 10*1000);
+				}, 10000);
 			}
 		}
 	}, false);
 };
-
-
-
-
