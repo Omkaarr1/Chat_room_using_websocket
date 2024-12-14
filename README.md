@@ -1,4 +1,4 @@
-epsile - an anonymous one-to-one chat
+alAnonymous one-to-one chat
 ====
 
 epsile got it name from epsilon, and it's an open-source clone of Omegle. It's using a node.js express+socket.io combo as server backend.
